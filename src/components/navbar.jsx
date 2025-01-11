@@ -5,10 +5,12 @@ import { navTitles } from "@/constants/Constants";
 import { CiMenuFries } from "react-icons/ci";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoMdHome } from "react-icons/io";
-import { FaShoppingBag } from "react-icons/fa";
+import { FaHeart, FaShoppingBag } from "react-icons/fa";
 import { HiOutlineCollection } from "react-icons/hi";
 import { FcAbout } from "react-icons/fc";
 import { RxCross2 } from "react-icons/rx";
+import { FaCartPlus } from "react-icons/fa6";
+import { FaUserCircle } from "react-icons/fa";
 
 // icons
 const icons = [
@@ -27,7 +29,7 @@ const icons = [
 ];
 
 // nested navbar titles views
-const NestedShopNavTitleViews = ({ items, hover, position }) => {
+const NavItem = ({ items, hover, position }) => {
   return (
     <motion.div
       onHoverEnd={() => hover("")}
@@ -44,16 +46,22 @@ const NestedShopNavTitleViews = ({ items, hover, position }) => {
         <motion.a
           initial={{ opacity: 0, x: 100 }}
           animate={{ opacity: 1, x: 0 }}
-          whileHover={{ backgroundColor: "blue" }}
+          whileHover={{
+            scale: 1.1,
+          }}
           transition={{
-            x: { duration: 0.8 },
+            x: { duration: 0.5, delay: ix * 0.1 },
             opacity: { duration: 0.8 },
             backgroundColor: {
+              duration: 0.5,
+            },
+            scale: {
               duration: 0.5,
             },
           }}
           key={i.title + ix}
           href={i.path}
+          className="px-4 py-1 hover:bg-white rounded-md "
         >
           {i.title}
         </motion.a>
@@ -137,7 +145,7 @@ const Drawer = ({ drawerRef, drawer, setDrawer }) => {
   return (
     <motion.div
       ref={drawerRef}
-      initial={{x:"-100%"}}
+      initial={{ x: "-100%" }}
       animate={{
         x: drawer ? "0%" : "-100%",
       }}
@@ -171,6 +179,7 @@ const Drawer = ({ drawerRef, drawer, setDrawer }) => {
   );
 };
 
+// for medium device
 const NavMedium = () => {
   const drawerRef = useRef(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -188,11 +197,11 @@ const NavMedium = () => {
   }, []);
 
   return (
-    <div>
+    <div className="border flex items-center h-16  ">
       {!isDrawerOpen && (
         <div
           onClick={() => setIsDrawerOpen(true)}
-          className=" h-[40px] hover:bg-gray-200 transition-all duration-300 hover:cursor-pointer rounded-md w-[40px] flex items-center justify-center "
+          className=" ml-1 h-[40px] hover:bg-gray-200 transition-all duration-300 hover:cursor-pointer rounded-md w-[40px] flex items-center justify-center "
         >
           <CiMenuFries className="text-2xl font-bold " />
         </div>
@@ -204,6 +213,95 @@ const NavMedium = () => {
         drawer={isDrawerOpen}
         setDrawer={setIsDrawerOpen}
       />
+
+      {/* title */}
+      <Title />
+    </div>
+  );
+};
+
+// cart
+const Cart = () => {
+  return (
+    <>
+      <div className="flex gap-5 items-center pr-5 ">
+        <div className=" text-2xl border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
+          <FaUserCircle />
+        </div>
+        <div className=" relative text-xl border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
+          <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
+            0
+          </div>
+          <FaCartPlus />
+        </div>
+        <div className=" relative bg-white text-xl border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
+          <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
+            0
+          </div>
+
+          <FaHeart />
+        </div>
+      </div>
+    </>
+  );
+};
+
+// title
+const Title = () => {
+  return (
+    <div className="my-auto ml-5">
+      <h1 className=" text-2xl lg:text-3xl font-bold text-orange-300 ">
+        LuxeCarat
+      </h1>
+    </div>
+  );
+};
+
+// Search container
+const SearchContainer = () => {
+  const [search, setSearch] = useState(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    const handleWindowClick = (e) => {
+      if (!(e.target.id === "p" || e.target.id === "input")) {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener("click", handleWindowClick);
+
+    return () => window.removeEventListener("click", handleWindowClick);
+  }, []);
+
+  console.log(isVisible);
+
+  return (
+    <div>
+      <form onSubmit={handleSearch} className="relative">
+        {isVisible ? (
+          ""
+        ) : (
+          <p
+            id="p"
+            onClick={() => setIsVisible(false)}
+            className="absolute top-2 left-3 text-[16px] text-gray-200  "
+          >
+            Search
+          </p>
+        )}
+        <input
+          id="input"
+          onChange={(e) => setSearch(e.target.value)}
+          onClick={() => setIsVisible(true)}
+          type="search"
+          className="border w-[130%] outline-none px-3 py-2 rounded-3xl "
+        />
+      </form>
     </div>
   );
 };
@@ -212,6 +310,7 @@ export default function Navbar() {
   const [isHover, setIsHover] = useState("");
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const elementRef = useRef([]);
+  const [pageWidth, setPageWidth] = useState(window.innerWidth);
 
   const handlePositons = (index) => {
     const elemet = elementRef.current[index];
@@ -225,37 +324,59 @@ export default function Navbar() {
     }
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      setPageWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className=" relative w-full lg:h-16 lg:bg-gray-100 ">
-      <div className=" hidden lg:flex items-center justify-center h-full w-[60%] mx-auto gap-5 ">
-        {navTitles.map((i, ix) => (
-          <div key={i.title + ix + "div"} className="relative">
-            <motion.a
-              key={ix + i.title}
-              href={i.path}
-              ref={(el) => (elementRef.current[ix] = el)}
-              onHoverStart={() => {
-                setIsHover(i.title);
-                handlePositons(ix);
-              }}
-              className=" relative px-4 py-1 rounded-3xl hover:cursor-pointer gap-1"
-            >
-              {i.title}
-            </motion.a>
-          </div>
-        ))}
+    <div className=" relative w-full lg:h-20 bg-white ">
+      {/* for large device */}
+      <div className=" w-full h-full hidden lg:flex items-center justify-between ">
+        {/* title */}
+        <Title />
+        {/* navigation title */}
+        <div className=" flex items-center justify-center h-full gap-5 ">
+          {navTitles.map((i, ix) => (
+            <div key={i.title + ix + "div"} className="relative">
+              <motion.a
+                key={ix + i.title}
+                href={i.path}
+                ref={(el) => (elementRef.current[ix] = el)}
+                onHoverStart={() => {
+                  setIsHover(i.title);
+                  handlePositons(ix);
+                }}
+                className=" relative px-4 py-1 rounded-3xl hover:cursor-pointer gap-1"
+              >
+                {i.title}
+              </motion.a>
+            </div>
+          ))}
+        </div>
+
+        {/* search container */}
+        <SearchContainer />
+
+        {/* cart section */}
+        <Cart />
       </div>
 
       {/* nested navbar */}
       {isHover === "Shop" && (
-        <NestedShopNavTitleViews
+        <NavItem
           hover={setIsHover}
           items={navTitles[1].items}
           position={hoverPosition}
         />
       )}
       {isHover === "Collections" && (
-        <NestedShopNavTitleViews
+        <NavItem
           hover={setIsHover}
           items={navTitles[2].items}
           position={hoverPosition}
@@ -263,7 +384,7 @@ export default function Navbar() {
       )}
 
       {/* for small devices */}
-      <NavMedium />
+      {pageWidth <= 786 && <NavMedium />}
     </div>
   );
 }
