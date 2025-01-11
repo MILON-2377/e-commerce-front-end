@@ -220,29 +220,68 @@ const NavMedium = () => {
   );
 };
 
-// cart
-const Cart = () => {
+// user container dropdown
+const UserDropDown = ({ setVisible }) => {
+  const userTitles = ["Login", "Register", "My Account"];
   return (
-    <>
-      <div className="flex gap-5 items-center pr-5 ">
-        <div className=" text-2xl border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
-          <FaUserCircle />
-        </div>
-        <div className=" relative text-xl border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
-          <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-            0
-          </div>
-          <FaCartPlus />
-        </div>
-        <div className=" relative bg-white text-xl border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
-          <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-            0
-          </div>
+    <div
+      onMouseLeave={() => setVisible(false)}
+      className=" top-12 right-20 rounded-md bg-gray-50 p-3 absolute "
+    >
+      {userTitles.map((i, ix) => (
+        <p
+          key={i + ix}
+          className=" hover:text-blue-500 hover:bg-white px-2 py-1 rounded-md transition-all duration-200 hover:cursor-pointer "
+        >
+          {i}
+        </p>
+      ))}
+    </div>
+  );
+};
 
-          <FaHeart />
-        </div>
+// cart and user container
+const Cart = () => {
+  const [isUserHover, setIsUserHover] = useState(false);
+
+  useEffect(() => {
+    const handleDropDown = (e) => {
+      if (!(e.target.id === "user-con")) {
+        setIsUserHover(false);
+      }
+    };
+
+    window.addEventListener("click", handleDropDown);
+
+    return () => window.removeEventListener("click", handleDropDown);
+  }, []);
+  return (
+    <div className="flex gap-5 w-[14%] items-center justify-end pr-5 relative ">
+      <div
+        id="user-con"
+        onMouseEnter={() => setIsUserHover(true)}
+        className=" text-2xl border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer "
+      >
+        <FaUserCircle />
       </div>
-    </>
+
+      <div className=" relative text-xl border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
+        <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
+          0
+        </div>
+        <FaCartPlus />
+      </div>
+      <div className=" relative bg-white text-xl border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
+        <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
+          0
+        </div>
+
+        <FaHeart />
+      </div>
+
+      {/* user drop down */}
+      {isUserHover && <UserDropDown setVisible={setIsUserHover} />}
+    </div>
   );
 };
 
