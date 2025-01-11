@@ -28,6 +28,84 @@ const icons = [
   },
 ];
 
+// user container dropdown
+const UserDropDown = ({ setVisible }) => {
+  const userTitles = ["Login", "Register", "My Account"];
+  return (
+    <div
+      id="user-drop-down"
+      onMouseLeave={() => setVisible(false)}
+      className=" top-12 -left-5 right-5 sm:-left-10 sm:right-14 lg:right-20 rounded-md bg-gray-50 p-3 absolute "
+    >
+      {userTitles.map((i, ix) => (
+        <p
+          key={i + ix}
+          className=" hover:text-blue-500 hover:bg-white px-2 py-1 rounded-md transition-all duration-200 hover:cursor-pointer "
+        >
+          {i}
+        </p>
+      ))}
+    </div>
+  );
+};
+
+// cart and user container
+const Cart = () => {
+  const [isUserHover, setIsUserHover] = useState(false);
+
+  useEffect(() => {
+    const handleDropDown = (e) => {
+      if (!(e.target.id === "user-con" || e.target.id === "user-i")) {
+        console.log(e.target.id);
+        setIsUserHover(false);
+      }
+    };
+
+    window.addEventListener("click", handleDropDown);
+
+    return () => window.removeEventListener("click", handleDropDown);
+  }, []);
+  return (
+    <div className="flex gap-5 lg:w-[14%] items-center justify-end pr-2 sm:pr-5 relative ">
+      <div
+        id="user-con"
+        onMouseEnter={() => setIsUserHover(true)}
+        className=" text-[16px] sm:text-xl lg:text-2xl border p-2 rounded-full transition-all duration-200 hover:bg-blue-500 hover:text-white text-blue-500 hover:cursor-pointer "
+      >
+        <FaUserCircle id="user-i" />
+      </div>
+
+      <div className=" relative text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
+        <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
+          0
+        </div>
+        <FaCartPlus />
+      </div>
+      <div className=" relative bg-white text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
+        <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
+          0
+        </div>
+
+        <FaHeart />
+      </div>
+
+      {/* user drop down */}
+      {isUserHover && <UserDropDown setVisible={setIsUserHover} />}
+    </div>
+  );
+};
+
+// title
+const Title = () => {
+  return (
+    <div className="my-auto ml-1">
+      <h1 className=" text-2xl lg:text-3xl font-bold text-orange-300 ">
+        LuxeCarat
+      </h1>
+    </div>
+  );
+};
+
 // nested navbar titles views
 const NavItem = ({ items, hover, position }) => {
   return (
@@ -153,7 +231,7 @@ const Drawer = ({ drawerRef, drawer, setDrawer }) => {
         duration: 0.5,
       }}
       onClick={(e) => e.stopPropagation()}
-      className="h-screen w-[300px] absolute top-0 p-5 bg-gray-100 flex flex-col gap-1 "
+      className="h-screen z-50 w-[300px] absolute top-0 p-5 bg-gray-100 flex flex-col gap-1 "
     >
       <div className="flex items-center justify-end px-2">
         <div
@@ -197,101 +275,30 @@ const NavMedium = () => {
   }, []);
 
   return (
-    <div className="border flex items-center h-16  ">
-      {!isDrawerOpen && (
-        <div
-          onClick={() => setIsDrawerOpen(true)}
-          className=" ml-1 h-[40px] hover:bg-gray-200 transition-all duration-300 hover:cursor-pointer rounded-md w-[40px] flex items-center justify-center "
-        >
-          <CiMenuFries className="text-2xl font-bold " />
-        </div>
-      )}
+    <div className=" flex items-center justify-between h-20 ">
+      <div className=" flex items-center ">
+        {!isDrawerOpen && (
+          <div
+            onClick={() => setIsDrawerOpen(true)}
+            className=" ml-1 h-[40px] hover:bg-gray-200 transition-all duration-300 hover:cursor-pointer rounded-md w-[40px] flex items-center justify-center "
+          >
+            <CiMenuFries className="text-2xl font-bold " />
+          </div>
+        )}
 
-      {/* drawer */}
-      <Drawer
-        drawerRef={drawerRef}
-        drawer={isDrawerOpen}
-        setDrawer={setIsDrawerOpen}
-      />
+        {/* drawer */}
+        <Drawer
+          drawerRef={drawerRef}
+          drawer={isDrawerOpen}
+          setDrawer={setIsDrawerOpen}
+        />
 
-      {/* title */}
-      <Title />
-    </div>
-  );
-};
-
-// user container dropdown
-const UserDropDown = ({ setVisible }) => {
-  const userTitles = ["Login", "Register", "My Account"];
-  return (
-    <div
-      onMouseLeave={() => setVisible(false)}
-      className=" top-12 right-20 rounded-md bg-gray-50 p-3 absolute "
-    >
-      {userTitles.map((i, ix) => (
-        <p
-          key={i + ix}
-          className=" hover:text-blue-500 hover:bg-white px-2 py-1 rounded-md transition-all duration-200 hover:cursor-pointer "
-        >
-          {i}
-        </p>
-      ))}
-    </div>
-  );
-};
-
-// cart and user container
-const Cart = () => {
-  const [isUserHover, setIsUserHover] = useState(false);
-
-  useEffect(() => {
-    const handleDropDown = (e) => {
-      if (!(e.target.id === "user-con")) {
-        setIsUserHover(false);
-      }
-    };
-
-    window.addEventListener("click", handleDropDown);
-
-    return () => window.removeEventListener("click", handleDropDown);
-  }, []);
-  return (
-    <div className="flex gap-5 w-[14%] items-center justify-end pr-5 relative ">
-      <div
-        id="user-con"
-        onMouseEnter={() => setIsUserHover(true)}
-        className=" text-2xl border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer "
-      >
-        <FaUserCircle />
+        {/* title */}
+        <Title />
       </div>
 
-      <div className=" relative text-xl border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
-        <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          0
-        </div>
-        <FaCartPlus />
-      </div>
-      <div className=" relative bg-white text-xl border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
-        <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          0
-        </div>
-
-        <FaHeart />
-      </div>
-
-      {/* user drop down */}
-      {isUserHover && <UserDropDown setVisible={setIsUserHover} />}
-    </div>
-  );
-};
-
-// title
-const Title = () => {
-  return (
-    <div className="my-auto ml-5">
-      <h1 className=" text-2xl lg:text-3xl font-bold text-orange-300 ">
-        LuxeCarat
-      </h1>
+      {/* cart section */}
+      <Cart />
     </div>
   );
 };
@@ -374,7 +381,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <div className=" relative w-full lg:h-20 bg-white ">
+    <div className=" relative w-full border-b lg:border-none lg:h-20 bg-white ">
       {/* for large device */}
       <div className=" w-full h-full hidden lg:flex items-center justify-between ">
         {/* title */}
