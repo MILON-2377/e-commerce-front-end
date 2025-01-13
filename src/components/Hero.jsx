@@ -8,17 +8,17 @@ const HeroData = [
   {
     title: "Family Jewelry Collection",
     des: "Designer Jewelry Necklaces and Earrings",
-    image: "/beautiful-young-woman-wearing-colourful-necklace-smiling.jpg",
+    image: "/image2.jpg",
   },
   {
     title: "Elegant Bridal Sets",
     des: "Beautifully Crafted Necklaces, Earrings, and Bracelets",
-    image: "/beautiful-young-woman-with-evening-makeup.jpg",
+    image: "/image1.jpg",
   },
   {
     title: "Modern Men's Accessories",
     des: "Stylish Rings, Bracelets, and Cufflinks",
-    image: "/beautiful-young-woman-with-evening-makeup.jpg",
+    image: "/image4.jpg",
   },
 ];
 
@@ -44,11 +44,13 @@ export default function Hero() {
     };
   }, [count]);
 
+  // console.log(HeroData[count].image);
+
   return (
     <div
       onMouseEnter={() => setIsHeroHover(true)}
       onMouseLeave={() => setIsHeroHover(false)}
-      className={`relative bg-cover bg-center  bg-orange-50 p-5 overflow-hidden h-[40vh] lg:h-[80vh] flex  justify-between items-center `}
+      className={`relative mask bg-cover bg-no-repeat bg-center  bg-white pr-10 p-5 overflow-hidden h-[40vh] sm:h-[60vh] lg:h-[80vh] flex  justify-between items-center `}
       style={{
         backgroundImage: `url(${HeroData[count].image})`,
       }}
@@ -89,9 +91,24 @@ export default function Hero() {
           >
             {HeroData[count]?.des}
           </motion.div>
+
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              duration: 1,
+              type: "spring",
+              damping: 9,
+              stiffness: 100,
+            }}
+            className="mt-8 ml-10 "
+          >
+            <button className="px-4 py-2 rounded-md bg-orange-300 text-white font-medium">
+              Read more
+            </button>
+          </motion.div>
         </div>
       </AnimatePresence>
-
 
       {/* buttons for large device */}
       <button

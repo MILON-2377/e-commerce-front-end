@@ -11,6 +11,7 @@ import { FcAbout } from "react-icons/fc";
 import { RxCross2 } from "react-icons/rx";
 import { FaCartPlus } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
 // icons
 const icons = [
@@ -35,7 +36,7 @@ const UserDropDown = ({ setVisible }) => {
     <div
       id="user-drop-down"
       onMouseLeave={() => setVisible(false)}
-      className=" top-12 -left-5 right-5 sm:-left-10 sm:right-14 lg:right-20 rounded-md bg-gray-50 p-3 absolute "
+      className=" top-12 z-30 -left-5 right-5 sm:-left-10 sm:right-14 lg:right-20 rounded-md bg-gray-50 p-3 absolute "
     >
       {userTitles.map((i, ix) => (
         <p
@@ -70,7 +71,7 @@ const Cart = () => {
       <div
         id="user-con"
         onMouseEnter={() => setIsUserHover(true)}
-        className=" text-[16px] sm:text-xl lg:text-2xl border p-2 rounded-full transition-all duration-200 hover:bg-blue-500 hover:text-white text-blue-500 hover:cursor-pointer "
+        className=" text-[16px] sm:text-xl border p-2 rounded-full transition-all duration-200 hover:bg-blue-500 hover:text-white text-blue-500 hover:cursor-pointer "
       >
         <FaUserCircle id="user-i" />
       </div>
@@ -98,7 +99,7 @@ const Cart = () => {
 // title
 const Title = () => {
   return (
-    <div className="my-auto ml-1">
+    <div className="my-auto ml-1 lg:ml-5 ">
       <h1 className=" text-2xl lg:text-3xl font-bold text-orange-300 ">
         LuxeCarat
       </h1>
@@ -118,7 +119,7 @@ const NavItem = ({ items, hover, position }) => {
         top: `${position.y + 47}px`,
         left: `${position.x}px`,
       }}
-      className={` bg-gray-50 w-[300px] absolute  overflow-hidden flex flex-col gap-2 p-5 `}
+      className={` bg-orange-50 bg-opacity-80 w-[300px] z-30 absolute  overflow-hidden flex flex-col gap-2 p-5 `}
     >
       {[...items].map((i, ix) => (
         <motion.a
@@ -139,7 +140,7 @@ const NavItem = ({ items, hover, position }) => {
           }}
           key={i.title + ix}
           href={i.path}
-          className="px-4 py-1 hover:bg-white rounded-md "
+          className="px-4 py-1 hover:bg-white transition-all duration-200 hover:text-blue-500 hover:font-medium rounded-md "
         >
           {i.title}
         </motion.a>
@@ -306,46 +307,22 @@ const NavMedium = () => {
 // Search container
 const SearchContainer = () => {
   const [search, setSearch] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
   };
 
-  useEffect(() => {
-    const handleWindowClick = (e) => {
-      if (!(e.target.id === "p" || e.target.id === "input")) {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener("click", handleWindowClick);
-
-    return () => window.removeEventListener("click", handleWindowClick);
-  }, []);
-
-  console.log(isVisible);
+ 
 
   return (
     <div>
       <form onSubmit={handleSearch} className="relative">
-        {isVisible ? (
-          ""
-        ) : (
-          <p
-            id="p"
-            onClick={() => setIsVisible(false)}
-            className="absolute top-2 left-3 text-[16px] text-gray-200  "
-          >
-            Search
-          </p>
-        )}
         <input
           id="input"
           onChange={(e) => setSearch(e.target.value)}
-          onClick={() => setIsVisible(true)}
+          placeholder="Search"
           type="search"
-          className="border w-[130%] outline-none px-3 py-2 rounded-3xl "
+          className="border border-orange-300 w-[130%] outline-none px-3 py-2 rounded-3xl "
         />
       </form>
     </div>
@@ -357,6 +334,8 @@ export default function Navbar() {
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const elementRef = useRef([]);
   const [pageWidth, setPageWidth] = useState(window.innerWidth);
+  const path = usePathname();
+
 
   const handlePositons = (index) => {
     const elemet = elementRef.current[index];
@@ -398,7 +377,7 @@ export default function Navbar() {
                   setIsHover(i.title);
                   handlePositons(ix);
                 }}
-                className=" relative px-4 py-1 rounded-3xl hover:cursor-pointer gap-1"
+                className={` ${path === i.path && "text-orange-300 font-medium"} relative px-4 py-1 rounded-3xl hover:cursor-pointer gap-1`}
               >
                 {i.title}
               </motion.a>
