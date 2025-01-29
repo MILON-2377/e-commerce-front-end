@@ -6,7 +6,8 @@ import { CiHeart } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
 import { FaStar } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { addWishe, removeWish } from "@/lib/Reducers/wishListSlice";
+import { addWishe} from "@/lib/Reducers/wishListSlice";
+import { addToCartItem } from "@/lib/Reducers/addToCartSlicer";
 
 const ViewAndWishlistData = [
   {
@@ -19,10 +20,16 @@ const ViewAndWishlistData = [
   },
 ];
 
-const AddToCartButton = () => {
+const AddToCartButton = ({product}) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCartItem = (i) => {
+    dispatch(addToCartItem(i));
+  }
+
   return (
     <div>
-      <button className=" absolute bottom-5 right-[30%] px-4 py-2 hover:bg-orange-300 hover:text-white rounded-3xl bg-white font-semiboldF ">
+      <button onClick={() => handleAddToCartItem(product._id)} className=" absolute bottom-5 right-[30%] px-4 py-2 hover:bg-orange-300 hover:text-white rounded-3xl bg-white font-semiboldF ">
         Add to Cart
       </button>
     </div>
@@ -80,11 +87,7 @@ const WishListAndViewCart = ({ product }) => {
 
 const ProductCart = ({ data }) => {
   const [isCartHover, setIsCartHover] = useState("");
-  const wishes = useSelector((state) => state.wishList );
 
-  console.log(wishes);
-
-  // console.log(data);
   return (
     <motion.div
       onMouseEnter={() => setIsCartHover(data._id)}
@@ -92,7 +95,7 @@ const ProductCart = ({ data }) => {
       className=" relative bg-gray-50 overflow-hidden w-full h-[30vh] "
     >
       {isCartHover === data._id && <WishListAndViewCart product={data} />}
-      {isCartHover && <AddToCartButton />}
+      {isCartHover && <AddToCartButton product={data} />}
 
       {/* animation */}
       {isCartHover === data._id && (

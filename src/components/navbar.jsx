@@ -12,6 +12,7 @@ import { RxCross2 } from "react-icons/rx";
 import { FaCartPlus } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
 
 // icons
 const icons = [
@@ -53,6 +54,9 @@ const UserDropDown = ({ setVisible }) => {
 // cart and user container
 const Cart = () => {
   const [isUserHover, setIsUserHover] = useState(false);
+  const wishes = useSelector((state) => state.wishList.wishLists);
+  const cartItems = useSelector(state => state.product.products );
+  // console.log(wishes);
 
   useEffect(() => {
     const handleDropDown = (e) => {
@@ -78,13 +82,15 @@ const Cart = () => {
 
       <div className=" relative text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
         <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          0
+          {
+            cartItems.length
+          }
         </div>
         <FaCartPlus />
       </div>
       <div className=" relative bg-white text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
         <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          0
+          {wishes.length}
         </div>
 
         <FaHeart />
@@ -312,8 +318,6 @@ const SearchContainer = () => {
     e.preventDefault();
   };
 
- 
-
   return (
     <div>
       <form onSubmit={handleSearch} className="relative">
@@ -335,7 +339,6 @@ export default function Navbar() {
   const elementRef = useRef([]);
   const [pageWidth, setPageWidth] = useState(window.innerWidth);
   const path = usePathname();
-
 
   const handlePositons = (index) => {
     const elemet = elementRef.current[index];
@@ -377,7 +380,9 @@ export default function Navbar() {
                   setIsHover(i.title);
                   handlePositons(ix);
                 }}
-                className={` ${path === i.path && "text-orange-300 font-medium"} relative px-4 py-1 rounded-3xl hover:cursor-pointer gap-1`}
+                className={` ${
+                  path === i.path && "text-orange-300 font-medium"
+                } relative px-4 py-1 rounded-3xl hover:cursor-pointer gap-1`}
               >
                 {i.title}
               </motion.a>
