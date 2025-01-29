@@ -39,7 +39,7 @@ export default function Pagination({ pageChange }) {
 
 
   const handleNextPageChange = () => {
-    if(pages < totals){
+    if(pages < totalPages.length){
       const currentPage = pages + 1;
       pageChange(currentPage);
       setPages(prev => prev + 1);
