@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { IoMdHome } from "react-icons/io";
 import { MdEmail } from "react-icons/md";
@@ -5,8 +6,12 @@ import { FaPhoneAlt, FaYoutubeSquare } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
 import { FaInstagramSquare } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathName = usePathname();
+
+  if(pathName === "/signup" || pathName === "/login") return null;
   return (
     <div className=" mt-20 bg-gray-100 lg:py-10 ">
       <section className=" w-[95%] sm:py-10 sm:w-[90%] lg:w-[80%] mx-auto flex sm:flex-col lg:flex-row sm:gap-8  lg:items-center justify-between ">

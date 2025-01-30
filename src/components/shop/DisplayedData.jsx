@@ -5,9 +5,11 @@ import useProducts from "@/hooks/useProducts";
 import { CiHeart } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
 import { FaStar } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { addWishe} from "@/lib/Reducers/wishListSlice";
-import { addToCartItem } from "@/lib/Reducers/addToCartSlicer";
+import { useDispatch } from "react-redux";
+import { addToCart} from "@/store/reducers/cartSlice";
+import { addToWishlistItem} from "@/store/reducers/wishListSlice";
+import useWishlist from "@/hooks/useWishlist";
+
 
 const ViewAndWishlistData = [
   {
@@ -24,7 +26,7 @@ const AddToCartButton = ({product}) => {
   const dispatch = useDispatch();
 
   const handleAddToCartItem = (i) => {
-    dispatch(addToCartItem(i));
+    dispatch(addToCart(i));
   }
 
   return (
@@ -38,14 +40,15 @@ const AddToCartButton = ({product}) => {
 
 const WishListAndViewCart = ({ product }) => {
   const [isButtonHover, setIsButtonHover] = useState(null);
-  const dispatch = useDispatch();
+  const {wishLists, addMutation} = useWishlist();
 
   const handleAddWishes = ({ id, name, title }) => {
     if (title !== "Add to wishlist") {
       return;
     }
 
-    dispatch(addWishe({ id, name }));
+    addMutation.mutate({id, name});
+
   };
 
   return (

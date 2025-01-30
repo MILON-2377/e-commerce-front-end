@@ -54,8 +54,8 @@ const UserDropDown = ({ setVisible }) => {
 // cart and user container
 const Cart = () => {
   const [isUserHover, setIsUserHover] = useState(false);
-  const wishes = useSelector((state) => state.wishList.wishLists);
-  const cartItems = useSelector(state => state.product.products );
+  const wishLists = useSelector((state) => state.wishList.wishLists);
+  const cartItems = useSelector((state) => state.cart.products);
   // console.log(wishes);
 
   useEffect(() => {
@@ -82,15 +82,13 @@ const Cart = () => {
 
       <div className=" relative text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
         <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          {
-            cartItems.length
-          }
+          {cartItems ? cartItems.length : 0}
         </div>
         <FaCartPlus />
       </div>
       <div className=" relative bg-white text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
         <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          {wishes.length}
+          {wishLists ? wishLists.length : 0}
         </div>
 
         <FaHeart />
@@ -361,6 +359,8 @@ export default function Navbar() {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  if(path === "/signup" || path === "/login") return null;
 
   return (
     <div className=" relative w-full border-b lg:border-none lg:h-20 bg-white ">

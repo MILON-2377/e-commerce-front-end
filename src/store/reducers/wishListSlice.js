@@ -4,11 +4,17 @@ const initialState = {
   wishLists: [],
 };
 
-export const wishSlice = createSlice({
-  name: "wishes",
+export const wishlistSlice = createSlice({
+  name: "wishlist",
   initialState,
   reducers: {
-    addWishe: (state, action) => {
+
+    setWishlist: (state, action) => {
+      console.log(action.payload);
+      state.wishLists = action.payload;
+    },
+
+    addToWishlistItem: (state, action) => {
       const isExist = state.wishLists.some(item => item.id === action.payload.id );
       if(!isExist){
         const wish = {
@@ -29,5 +35,5 @@ export const wishSlice = createSlice({
   },
 });
 
-export const { addWishe, removeWish } = wishSlice.actions;
-export default wishSlice.reducer;
+export const { addToWishlistItem, removeWish, setWishlist } = wishlistSlice.actions;
+export default wishlistSlice.reducer;
