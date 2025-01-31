@@ -1,9 +1,26 @@
+"use client";
 import Link from "next/link";
 import React from "react";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import Title from "../Title";
+import { useForm } from "react-hook-form";
+import useLogin from "@/hooks/useLogin";
 
 export default function LoginForm() {
+  const {register, handleSubmit, formState:{errors},reset} = useForm();
+  const { mutate, isPending, error} = useLogin();
+
+  const onSubmit = (data) => {
+    mutate(data, {
+      onSuccess: (res) => {
+        console.log("user log in success:", res.data);
+      },
+      onError:(error) => {
+        console.log("log in error", error?.message || error);
+      }
+    })
+  }
+
   return (
     <div className=" relative flex-1 flex flex-col items-center justify-center h-full p-5 ">
       {/* title */}
@@ -37,7 +54,7 @@ export default function LoginForm() {
       </div>
 
       {/* form */}
-      <form className=" lg:w-[60%] w-full mt-10 flex flex-col gap-5 ">
+      <form onSubmit={handleSubmit(onSubmit)} className=" lg:w-[60%] w-full mt-10 flex flex-col gap-5 ">
         <label>
           <span className=" font-semibold text-sm text-gray-400 font-sans ">
             Email
@@ -46,6 +63,7 @@ export default function LoginForm() {
             className=" mt-1 w-full px-4 py-2 rounded-3xl outline-none bg-white "
             type="text"
             placeholder="Enter your email"
+            {...register("email", {required: true})}
           />
         </label>
         <label>
@@ -55,10 +73,11 @@ export default function LoginForm() {
           <input
             className=" mt-1 w-full px-4 py-2 rounded-3xl outline-none bg-white "
             type="password"
-            placeholder="Enter your email"
+            placeholder="Enter your password"
+            {...register("password", {required: true})}
           />
         </label>
-        <button className=" transition-all hover:bg-orange-300 active:scale-95 active:bg-orange-50 px-4 py-2 rounded-3xl bg-orange-400 text-white ">
+        <button  className=" transition-all hover:bg-orange-300 active:scale-95 active:bg-orange-50 px-4 py-2 rounded-3xl bg-orange-400 text-white ">
           Log In
         </button>
       </form>
