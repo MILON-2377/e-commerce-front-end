@@ -12,8 +12,6 @@ import { RxCross2 } from "react-icons/rx";
 import { FaCartPlus } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
-import { useSelector } from "react-redux";
-import useWishlist from "@/hooks/useWishlist";
 import { useQueryClient } from "@tanstack/react-query";
 
 // icons
@@ -58,17 +56,19 @@ const Cart = () => {
   const [isUserHover, setIsUserHover] = useState(false);
   const queryClient = useQueryClient();
   const [wishlist, setWishlist] = useState([]);
-  const cartItems = useSelector((state) => state.cart.products);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     const unsubscribe = queryClient.getQueryCache().subscribe(() => {
       const updateWihslist = queryClient.getQueryData(["wishlist"]) || [];
+      const updateCart = queryClient.getQueryData(["cartItems"]) || [];
+      setCart(updateCart);
       setWishlist(updateWihslist);
     });
 
     // Effect 2:Handle dropdown click outside
     const handlDropdown = (e) => {
-      if(!(e.target.id === "user-icon" || e.target.id === "user-i")){
+      if (!(e.target.id === "user-icon" || e.target.id === "user-i")) {
         console.log(e.target.id);
         setIsUserHover(false);
       }
@@ -76,12 +76,11 @@ const Cart = () => {
 
     window.addEventListener("click", handlDropdown);
 
-
     // cleanup function for both effects
     return () => {
       unsubscribe();
       window.removeEventListener("click", handlDropdown);
-    }
+    };
   }, [queryClient]);
 
   return (
@@ -96,7 +95,7 @@ const Cart = () => {
 
       <div className=" relative text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
         <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          {cartItems ? cartItems.length : 0}
+          {cart ? cart.length : 0}
         </div>
         <FaCartPlus />
       </div>
@@ -349,7 +348,7 @@ export default function Navbar() {
   const [isHover, setIsHover] = useState("");
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const elementRef = useRef([]);
-  const [pageWidth, setPageWidth] = useState(window.innerWidth);
+  const [pageWidth, setPageWidth] = useState(0);
   const path = usePathname();
 
   const handlePositons = (index) => {
@@ -365,6 +364,8 @@ export default function Navbar() {
   };
 
   useEffect(() => {
+    setPageWidth(window.innerWidth);
+
     const handleResize = () => {
       setPageWidth(window.innerWidth);
     };

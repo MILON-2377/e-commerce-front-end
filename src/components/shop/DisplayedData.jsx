@@ -4,11 +4,11 @@ import { motion } from "motion/react";
 import useProducts from "@/hooks/useProducts";
 import { CiHeart } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
-import { FaStar } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/store/reducers/cartSlice";
+import { FaCheck, FaPlus, FaStar } from "react-icons/fa";
+import { VscChromeMinimize } from "react-icons/vsc";
 import useWishlist from "@/hooks/useWishlist";
 import Swal from "sweetalert2";
+import useCart from "@/hooks/useCart";
 
 const ViewAndWishlistData = [
   {
@@ -22,20 +22,66 @@ const ViewAndWishlistData = [
 ];
 
 const AddToCartButton = ({ product }) => {
-  const dispatch = useDispatch();
+  const { addCartMutation } = useCart();
+  const [quantity, setQuantity] = useState(1);
 
-  const handleAddToCartItem = (i) => {
-    dispatch(addToCart(i));
+  const handleAddToCartItem = (q,id,p) => {
+    addCartMutation.mutate({quantity: q, productId: id, price: p});
   };
 
   return (
     <div>
       <button
-        onClick={() => handleAddToCartItem(product._id)}
+        onClick={() => document.getElementById("my_modal_4").showModal()}
         className=" absolute bottom-5 right-[30%] px-4 py-2 hover:bg-orange-300 hover:text-white rounded-3xl bg-white font-semiboldF "
       >
-        Add to Cart
+        View cart
       </button>
+
+      <dialog id="my_modal_4" className="modal sm:w-full ">
+        <div className="modal-box w-11/12 max-w-5xl">
+          <div>
+            <div>image</div>
+            <div>images container</div>
+          </div>
+          <h2 className=" sm:text-2xl text-xl ">{product?.productName}</h2>
+          <div>
+            <p>start</p>
+            <p>reviews</p>
+          </div>
+          <div className=" flex items-center gap-2 text-sm ">
+            <FaCheck />
+            <span>stocks</span>
+          </div>
+          <p>{product?.description}</p>
+
+          {/* quantity button */}
+          <div className=" mt-5 flex items-center justify-between w-[60%]  ">
+            <p className=" text-xl font-semibold ">Quantity: </p>
+
+            <div className=" px-6 py-2 gap-5 rounded-3xl flex items-center justify-center border bg-white ">
+              <VscChromeMinimize
+                onClick={() => setQuantity((prev) => (prev > 1 ? prev - 1 : 1))}
+                className="hover:cursor-pointer font-bold "
+              />
+              <span>{quantity}</span>
+              <FaPlus
+                onClick={() => setQuantity((prev) => prev + 1)}
+                className=" hover:cursor-pointer "
+              />
+            </div>
+            <button onClick={() => handleAddToCartItem(quantity, product._id, product.price)} className=" px-4 py-2 text-gray-100 bg-orange-400 hover:bg-orange-300 hover:text-white rounded-3xl font-semibold ">
+              Add to cart
+            </button>
+          </div>
+          <div className="modal-action">
+            <form method="dialog">
+              {/* if there is a button, it will close the modal */}
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
