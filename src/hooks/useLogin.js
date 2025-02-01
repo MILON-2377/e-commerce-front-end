@@ -1,11 +1,10 @@
+import apiUrl from "@/utils/api";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios"
 
 
 
 const logInUser = async(userData) => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const res = await axios.post(`${apiUrl}users/login`, userData);
+    const res = await apiUrl.post(`/users/login`, userData);
     return res.data;
 }
 

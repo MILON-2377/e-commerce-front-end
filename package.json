@@ -12,6 +12,7 @@
     "@reduxjs/toolkit": "^2.5.1",
     "@tanstack/react-query": "^5.65.1",
     "axios": "^1.7.9",
+    "js-cookie": "^3.0.5",
     "motion": "^11.13.1",
     "next": "^14.2.23",
     "react": "^18",
@@ -22,7 +23,8 @@
     "react-slick": "^0.30.3",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.15.10"
   },
   "devDependencies": {
     "daisyui": "^4.12.23",

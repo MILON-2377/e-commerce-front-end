@@ -6,10 +6,9 @@ import { CiHeart } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
 import { FaStar } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { addToCart} from "@/store/reducers/cartSlice";
-import { addToWishlistItem} from "@/store/reducers/wishListSlice";
+import { addToCart } from "@/store/reducers/cartSlice";
 import useWishlist from "@/hooks/useWishlist";
-
+import Swal from "sweetalert2";
 
 const ViewAndWishlistData = [
   {
@@ -22,16 +21,19 @@ const ViewAndWishlistData = [
   },
 ];
 
-const AddToCartButton = ({product}) => {
+const AddToCartButton = ({ product }) => {
   const dispatch = useDispatch();
 
   const handleAddToCartItem = (i) => {
     dispatch(addToCart(i));
-  }
+  };
 
   return (
     <div>
-      <button onClick={() => handleAddToCartItem(product._id)} className=" absolute bottom-5 right-[30%] px-4 py-2 hover:bg-orange-300 hover:text-white rounded-3xl bg-white font-semiboldF ">
+      <button
+        onClick={() => handleAddToCartItem(product._id)}
+        className=" absolute bottom-5 right-[30%] px-4 py-2 hover:bg-orange-300 hover:text-white rounded-3xl bg-white font-semiboldF "
+      >
         Add to Cart
       </button>
     </div>
@@ -40,15 +42,29 @@ const AddToCartButton = ({product}) => {
 
 const WishListAndViewCart = ({ product }) => {
   const [isButtonHover, setIsButtonHover] = useState(null);
-  const {wishLists, addMutation} = useWishlist();
+  const { addMutation } = useWishlist();
 
-  const handleAddWishes = ({ id, name, title }) => {
+  const handleAddWishes = ({ id, title }) => {
     if (title !== "Add to wishlist") {
       return;
     }
 
-    addMutation.mutate({id, name});
-
+    addMutation.mutate(
+      { id },
+      {
+        onError: (error) => {
+          if (error.message === "Item is already in the wishlist") {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Item already in the wishlist",
+            });
+          } else {
+            console.error("Error adding to wishlist", error);
+          }
+        },
+      }
+    );
   };
 
   return (

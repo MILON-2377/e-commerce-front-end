@@ -20,6 +20,10 @@ export default function Signup() {
     mutate(data, {
       onSuccess: (res) => {
         console.log("Sign up success:", res);
+
+        // Set token in cookies
+        // if(res?)
+
         reset();
       },
       onError: (error) => {

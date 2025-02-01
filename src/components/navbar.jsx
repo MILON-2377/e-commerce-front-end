@@ -13,6 +13,8 @@ import { FaCartPlus } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
+import useWishlist from "@/hooks/useWishlist";
+import { useQueryClient } from "@tanstack/react-query";
 
 // icons
 const icons = [
@@ -54,22 +56,34 @@ const UserDropDown = ({ setVisible }) => {
 // cart and user container
 const Cart = () => {
   const [isUserHover, setIsUserHover] = useState(false);
-  const wishLists = useSelector((state) => state.wishList.wishLists);
+  const queryClient = useQueryClient();
+  const [wishlist, setWishlist] = useState([]);
   const cartItems = useSelector((state) => state.cart.products);
-  // console.log(wishes);
 
   useEffect(() => {
-    const handleDropDown = (e) => {
-      if (!(e.target.id === "user-con" || e.target.id === "user-i")) {
+    const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+      const updateWihslist = queryClient.getQueryData(["wishlist"]) || [];
+      setWishlist(updateWihslist);
+    });
+
+    // Effect 2:Handle dropdown click outside
+    const handlDropdown = (e) => {
+      if(!(e.target.id === "user-icon" || e.target.id === "user-i")){
         console.log(e.target.id);
         setIsUserHover(false);
       }
     };
 
-    window.addEventListener("click", handleDropDown);
+    window.addEventListener("click", handlDropdown);
 
-    return () => window.removeEventListener("click", handleDropDown);
-  }, []);
+
+    // cleanup function for both effects
+    return () => {
+      unsubscribe();
+      window.removeEventListener("click", handlDropdown);
+    }
+  }, [queryClient]);
+
   return (
     <div className="flex gap-5 lg:w-[14%] items-center justify-end pr-2 sm:pr-5 relative ">
       <div
@@ -88,7 +102,7 @@ const Cart = () => {
       </div>
       <div className=" relative bg-white text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
         <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          {wishLists ? wishLists.length : 0}
+          {wishlist ? wishlist.length : 0}
         </div>
 
         <FaHeart />
@@ -360,7 +374,7 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if(path === "/signup" || path === "/login") return null;
+  if (path === "/signup" || path === "/login") return null;
 
   return (
     <div className=" relative w-full border-b lg:border-none lg:h-20 bg-white ">
