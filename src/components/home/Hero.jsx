@@ -135,7 +135,7 @@ export default function Hero() {
         {HeroData.map((i, ix) => (
           <>
             <button
-              key={i.des + ix + "buttons keys"}
+              key={i.des + ix + "buttons keys add"}
               onClick={() => setCount(ix)}
               className={`
                 ${count === ix && "bg-blue-500"}

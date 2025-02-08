@@ -6,9 +6,10 @@ import { CiHeart } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
 import { FaCheck, FaPlus, FaStar } from "react-icons/fa";
 import { VscChromeMinimize } from "react-icons/vsc";
-import useWishlist from "@/hooks/useWishlist";
 import Swal from "sweetalert2";
-import useCart from "@/hooks/useCart";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCartBackend, fetchCart } from "@/store/reducers/cartSlice";
+import { addToWishlist, addToWishlistBackend } from "@/store/reducers/wishListSlice";
 
 const ViewAndWishlistData = [
   {
@@ -22,11 +23,26 @@ const ViewAndWishlistData = [
 ];
 
 const AddToCartButton = ({ product }) => {
-  const { addCartMutation } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.cart);
 
-  const handleAddToCartItem = (q,id,p) => {
-    addCartMutation.mutate({quantity: q, productId: id, price: p});
+  useEffect(() => {
+    if (!cartItems.totalItems) dispatch(fetchCart());
+  }, [dispatch, cartItems.totalItems]);
+
+  const handleAddToCartItem = (q, id, p) => {
+    dispatch(addToCartBackend({ productId: id, price: p, quantity: q }));
+    document.getElementById("my_modal_4").close();
+
+    Swal.fire({
+      title: "Adding to Cart...",
+      text: "Please wait while we add the product.",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
   };
 
   return (
@@ -70,7 +86,12 @@ const AddToCartButton = ({ product }) => {
                 className=" hover:cursor-pointer "
               />
             </div>
-            <button onClick={() => handleAddToCartItem(quantity, product._id, product.price)} className=" px-4 py-2 text-gray-100 bg-orange-400 hover:bg-orange-300 hover:text-white rounded-3xl font-semibold ">
+            <button
+              onClick={() =>
+                handleAddToCartItem(quantity, product._id, product.price)
+              }
+              className=" px-4 py-2 text-gray-100 bg-orange-400 hover:bg-orange-300 hover:text-white rounded-3xl font-semibold "
+            >
               Add to cart
             </button>
           </div>
@@ -88,29 +109,23 @@ const AddToCartButton = ({ product }) => {
 
 const WishListAndViewCart = ({ product }) => {
   const [isButtonHover, setIsButtonHover] = useState(null);
-  const { addMutation } = useWishlist();
+  const dispatch = useDispatch();
 
   const handleAddWishes = ({ id, title }) => {
     if (title !== "Add to wishlist") {
       return;
     }
 
-    addMutation.mutate(
-      { id },
-      {
-        onError: (error) => {
-          if (error.message === "Item is already in the wishlist") {
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "Item already in the wishlist",
-            });
-          } else {
-            console.error("Error adding to wishlist", error);
-          }
-        },
-      }
-    );
+    // dispatch(addToWishlist(id));
+    dispatch(addToWishlistBackend({ id }));
+    Swal.fire({
+      title: "Adding to Cart...",
+      text: "Please wait while we add the product.",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
   };
 
   return (

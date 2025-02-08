@@ -12,7 +12,9 @@ import { RxCross2 } from "react-icons/rx";
 import { FaCartPlus } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCart } from "@/store/reducers/cartSlice";
+import { fetchWishlist } from "@/store/reducers/wishListSlice";
 
 // icons
 const icons = [
@@ -54,17 +56,19 @@ const UserDropDown = ({ setVisible }) => {
 // cart and user container
 const Cart = () => {
   const [isUserHover, setIsUserHover] = useState(false);
-  const queryClient = useQueryClient();
-  const [wishlist, setWishlist] = useState([]);
-  const [cart, setCart] = useState([]);
+  const {cartItems} = useSelector(state=> state.cart);
+  const {wishlists} = useSelector(state => state.wishlist);
+  const dispatch = useDispatch();
+
+  // console.log("cart items", cartItems.totalItems);
+  // console.log("wishlists ", wishlists);
+
+  // console.log("hello from cart");
 
   useEffect(() => {
-    const unsubscribe = queryClient.getQueryCache().subscribe(() => {
-      const updateWihslist = queryClient.getQueryData(["wishlist"]) || [];
-      const updateCart = queryClient.getQueryData(["cartItems"]) || [];
-      setCart(updateCart);
-      setWishlist(updateWihslist);
-    });
+   
+    if(!cartItems.totalItems) dispatch(fetchCart());
+    if(!wishlists.length) dispatch(fetchWishlist());
 
     // Effect 2:Handle dropdown click outside
     const handlDropdown = (e) => {
@@ -78,10 +82,10 @@ const Cart = () => {
 
     // cleanup function for both effects
     return () => {
-      unsubscribe();
       window.removeEventListener("click", handlDropdown);
     };
-  }, [queryClient]);
+  }, [dispatch, cartItems.totalItems, wishlists.length]);
+
 
   return (
     <div className="flex gap-5 lg:w-[14%] items-center justify-end pr-2 sm:pr-5 relative ">
@@ -95,13 +99,13 @@ const Cart = () => {
 
       <div className=" relative text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-blue-500 hover:cursor-pointer ">
         <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          {cart ? cart.length : 0}
+          {cartItems.totalItems ? cartItems.totalItems : 0 }
         </div>
         <FaCartPlus />
       </div>
       <div className=" relative bg-white text-[16px] sm:text-[18px] border p-2 rounded-full transition-all duration-200 hover:bg-red-500 text-red-500 hover:text-white hover:cursor-pointer ">
         <div className=" absolute -top-3 left-5 text-xs px-1 text-white rounded-xl bg-orange-400 ">
-          {wishlist ? wishlist.length : 0}
+          {wishlists ? wishlists.length : 0}
         </div>
 
         <FaHeart />
@@ -409,7 +413,7 @@ export default function Navbar() {
         <SearchContainer />
 
         {/* cart section */}
-        <Cart />
+        <Cart className={`${isHover ? " opacity-100 visible " : " opacity-0 invisible "} transition-opacity duration-300 `} />
       </div>
 
       {/* nested navbar */}
